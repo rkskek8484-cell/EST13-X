@@ -1,5 +1,5 @@
-import { useState } from 'react';
-import { Box, Typography, TextField, Button, Divider } from '@mui/material';
+import { useState, useRef } from 'react';
+import { Box, Typography, TextField, Button, Divider, Snackbar } from '@mui/material';
 import { authService } from '../firebase';
 import {
   createUserWithEmailAndPassword,
@@ -14,6 +14,10 @@ function Auth() {
     email: '',
     password: '',
   });
+  const [error, setError] = useState('');
+  const [errorOpen, setErrorOpen] = useState(false);
+
+  const emailRef = useRef(null);
 
   const auth = authService;
   const provider = new GoogleAuthProvider();
@@ -40,6 +44,10 @@ function Auth() {
           const errorCode = error.code;
           const errorMessage = error.message;
           console.log(errorCode, errorMessage);
+          setError(errorMessage.includes('email-already-in-use') ? '이메일을 이미 사용중입니다.' : errorMessage); //에러 메세지 생성
+          setErrorOpen(true);
+          setForm({ email: '', password: '' });
+          emailRef.current.focus();
         });
     } else {
       //로그인
@@ -53,6 +61,10 @@ function Auth() {
           const errorCode = error.code;
           const errorMessage = error.message;
           console.log(errorCode, errorMessage);
+          setError(errorMessage); //에러 메세지 생성
+          setErrorOpen(true);
+          setForm({ email: '', password: '' });
+          emailRef.current.focus();
         });
     }
   };
@@ -88,6 +100,8 @@ function Auth() {
           name='email'
           variant='outlined'
           onChange={handleChange}
+          inputRef={emailRef}
+          value={form.email}
         />
         <TextField
           sx={{ mt: 2 }}
@@ -97,10 +111,21 @@ function Auth() {
           name='password'
           variant='outlined'
           onChange={handleChange}
+          value={form.password}
         />
         <Button sx={{ mt: 2 }} type='submit' variant='contained'>
           {newAccount ? '회원가입' : '로그인'}
         </Button>
+
+        <Snackbar
+          open={errorOpen}
+          autoHideDuration={3000}
+          message={error}
+          onClose={() => {
+            setErrorOpen(false);
+          }}
+        />
+
         <Divider sx={{ my: 3 }} />
 
         <Button onClick={onGoogleSignIn} sx={{ mt: 2 }} type='button' variant='contained'>

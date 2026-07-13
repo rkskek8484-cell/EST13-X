@@ -12,6 +12,7 @@ import {
 } from 'firebase/firestore';
 import { db } from '../firebase';
 import { useEffect, useState } from 'react';
+import Comment from '../components/Comment';
 
 function Home() {
   const [comment, setComment] = useState('');
@@ -77,14 +78,9 @@ function Home() {
         </Button>
       </Box>
       <Divider sx={{ my: 3 }} />
-      <List sx={{ width: '100%', bgcolor: 'background.paper' }}>
+      <List sx={{ width: '100%' }}>
         {comments.map((item) => (
-          <ListItem key={item.id} alignItems='flex-start' divider>
-            <ListItemText
-              primary={item.comment}
-              secondary={item.date?.toDate ? item.date.toDate().toLocaleString() : '작성시간 없음'}
-            />
-          </ListItem>
+          <Comment key={item.id} item={item} />
         ))}
       </List>
     </>

@@ -1,6 +1,13 @@
 import { Divider, ListItem, ListItemText, Button, Stack } from '@mui/material';
+import { db } from '../firebase';
+import { doc, deleteDoc } from 'firebase/firestore';
 
 export default function Comment({ item, isShown }) {
+  const handleDelete = async () => {
+    if (!window.confirm('정말 삭제할까요?')) return;
+    await deleteDoc(doc(db, 'comments', item.id));
+  };
+
   return (
     <ListItem key={item.id} alignItems='flex-center' divider>
       <ListItemText
@@ -12,7 +19,7 @@ export default function Comment({ item, isShown }) {
           <Button variant='outlined' size='small'>
             수정
           </Button>
-          <Button variant='contained' color='error' size='small'>
+          <Button variant='contained' color='error' size='small' onClick={handleDelete}>
             삭제
           </Button>
         </Stack>

@@ -11,7 +11,7 @@ import {
   onSnapshot,
 } from 'firebase/firestore';
 import { db } from '../firebase';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import Comment from '../components/Comment';
 import UploadFileIcon from '@mui/icons-material/UploadFile';
 
@@ -19,6 +19,8 @@ function Home({ userId }) {
   const [comment, setComment] = useState('');
   const [comments, setComments] = useState([]);
   const [attachment, setAttachment] = useState(null);
+  const fileInputRef = useRef(null);
+
   /*
   useEffect로 데이터 조회 결과를 변수명 comments에 할당
   */
@@ -70,6 +72,9 @@ function Home({ userId }) {
 
   const onClearFile = () => {
     setAttachment(null);
+    if (fileInputRef.current) {
+      fileInputRef.current.value = '';
+    }
   };
 
   return (
@@ -95,7 +100,7 @@ function Home({ userId }) {
         <Box sx={{ mt: 1, display: 'flex', alignItems: 'center', gap: 1 }}>
           <Button component='label' type='button' variant='outlined' startIcon={<UploadFileIcon />}>
             이미지 선택
-            <input type='file' accept='image/*' onChange={onFileChange} />
+            <input type='file' hidden ref={fileInputRef} accept='image/*' onChange={onFileChange} />
           </Button>
           {attachment && (
             <Box sx={{ mt: 1, display: 'flex', alignItems: 'center', gap: 1 }}>

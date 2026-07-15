@@ -59,6 +59,25 @@ export default function Comment({ item, isShown }) {
             primary={item.comment}
             secondary={item.date?.toDate ? item.date.toDate().toLocaleString() : '작성시간 없음'}
           />
+          {
+            // 이미지가 있으면 이미지 출력
+            item.image && (
+              <Box sx={{ marginRight: '5px', mt: 1, display: 'flex', alignItems: 'center', gap: 1 }}>
+                <Box
+                  component='img'
+                  src={item.image}
+                  alt='미리보기'
+                  sx={{
+                    width: 50,
+                    height: 50,
+                    objectFit: 'cover',
+                    border: 'ipx solid #ddd',
+                    borderRadius: 3,
+                  }}
+                ></Box>
+              </Box>
+            )
+          }
           {isShown && (
             <Stack direction='row' spacing={1}>
               <Button variant='outlined' size='small' onClick={toggleEditMode}>

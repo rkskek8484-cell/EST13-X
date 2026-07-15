@@ -10,11 +10,18 @@ export default function Comment({ item, isShown }) {
 
   const handleDelete = async () => {
     if (!window.confirm('정말 삭제할까요?')) return;
-    await deleteDoc(doc(db, 'comments', item.id));
+    try {
+      await deleteDoc(doc(db, 'comments', item.id));
 
-    const storage = storageService; // storage 초기화
-    const storageRef = ref(storage, item.image);
-    deleteObject(storageRef);
+      if (item.image) {
+        const storage = storageService;
+        const storageRef = ref(storage, item.image);
+        await deleteObject(storageRef);
+      }
+    } catch (error) {
+      console.error('삭제 오류', error);
+      alert('삭제 중 오류가 발생했습니다.');
+    }
   };
 
   const toggleEditMode = () => {

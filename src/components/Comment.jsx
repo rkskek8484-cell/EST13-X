@@ -1,6 +1,7 @@
 import { Box, TextField, Divider, ListItem, ListItemText, Button, Stack } from '@mui/material';
-import { db } from '../firebase';
+import { db, storageService } from '../firebase';
 import { doc, deleteDoc, updateDoc } from 'firebase/firestore';
+import { ref, deleteObject } from 'firebase/storage';
 import { useState } from 'react';
 
 export default function Comment({ item, isShown }) {
@@ -10,10 +11,16 @@ export default function Comment({ item, isShown }) {
   const handleDelete = async () => {
     if (!window.confirm('정말 삭제할까요?')) return;
     await deleteDoc(doc(db, 'comments', item.id));
+
+    const storage = storageService; // storage 초기화
+    const storageRef = ref(storage, item.image);
+    deleteObject(storageRef);
   };
+
   const toggleEditMode = () => {
     setEdit((prev) => !prev);
   };
+
   const onSubmit = async (e) => {
     e.preventDefault();
     const commentRef = doc(db, 'comments', item.id);

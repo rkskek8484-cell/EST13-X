@@ -10,16 +10,21 @@ import {
   limit,
   onSnapshot,
 } from 'firebase/firestore';
-import { db } from '../firebase';
+import { db, storageService } from '../firebase';
+import { ref } from 'firebase/storage';
 import { useEffect, useState, useRef } from 'react';
-import Comment from '../components/Comment';
+import { v4 as uuidv4 } from 'uuid';
 import UploadFileIcon from '@mui/icons-material/UploadFile';
+import Comment from '../components/Comment';
 
 function Home({ userId }) {
   const [comment, setComment] = useState('');
   const [comments, setComments] = useState([]);
   const [attachment, setAttachment] = useState(null);
   const fileInputRef = useRef(null);
+
+  const storage = storageService; // storage 초기화
+  const storageRef = ref(storage); //참조 초기화
 
   /*
   useEffect로 데이터 조회 결과를 변수명 comments에 할당
@@ -46,6 +51,7 @@ function Home({ userId }) {
 
   const onSubmit = async (e) => {
     e.preventDefault();
+    const storageRef = ref(storage, `${userId}/${uuidv4()}`);
     try {
       const docRef = await addDoc(collection(db, 'comments'), {
         // comment: comment,
